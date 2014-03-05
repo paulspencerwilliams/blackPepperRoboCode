@@ -1,6 +1,6 @@
 package edinburgh;
 import robocode.*;
-//import java.awt.Color;
+import java.awt.Color;
 
 // API help : http://robocode.sourceforge.net/docs/robocode/robocode/Robot.html
 
@@ -9,6 +9,9 @@ import robocode.*;
  */
 public class EdinburghInvasion extends Robot
 {
+	boolean isRed = false;
+	boolean	isGunRotated = false;
+	boolean isHunting = false;
 	/**
 	 * run: EdinburghInvasion's default behavior
 	 */
@@ -21,7 +24,14 @@ public class EdinburghInvasion extends Robot
 
 		// setColors(Color.red,Color.blue,Color.green); // body,gun,radar
 		turnGunLeft(90);
+		isGunRotated = true;
 		// Robot main loop
+		justWalkAround();
+		
+	}
+	
+	public void justWalkAround()
+	{
 		while(true) {
 			// Replace the next 4 lines with any behavior you would like
 			ahead(2000);
@@ -32,8 +42,39 @@ public class EdinburghInvasion extends Robot
 	 * onScannedRobot: What to do when you see another robot
 	 */
 	public void onScannedRobot(ScannedRobotEvent e) {
-		// Replace the next line with any behavior you would like
-		fire(1);
+		huntRobotDown (e);
+		
+		
+	}
+	
+	public void huntRobotDown (ScannedRobotEvent e)
+	{
+		isHunting = true;
+		flipColors ();
+		turnLeft(getHeading() - e.getBearing());
+		if (isGunRotated)
+		{
+			fire(1);
+			ahead(100);
+			turnGunRight(90);
+			isGunRotated = false;
+		}
+		ahead(100);
+		
+	}
+	
+	public void flipColors ()
+	{
+		if (isRed)
+		{
+			setColors(Color.blue,Color.blue,Color.blue);
+			isRed = false;
+		}
+		else
+		{
+			setColors(Color.red,Color.red,Color.red);
+			isRed = true;
+		}
 	}
 
 	/**
@@ -41,7 +82,7 @@ public class EdinburghInvasion extends Robot
 	 */
 	public void onHitByBullet(HitByBulletEvent e) {
 		// Replace the next line with any behavior you would like
-		back(10);
+		//back(10);
 	}
 	
 	/**
@@ -50,6 +91,8 @@ public class EdinburghInvasion extends Robot
 	public void onHitWall(HitWallEvent e) {
 		// Replace the next line with any behavior you would like
 		back(10);
+		turnRadarLeft(180);
+		turnRadarRight(180);
 		turnLeft(90);
 		
 	}	
